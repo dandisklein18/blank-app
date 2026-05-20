@@ -1,6 +1,8 @@
 import streamlit as st
 import pandas as pd
 import numpy as np
+import plotly.graph_objects as go
+from plotly.subplots import make_subplots
 
 # 1. Page Configuration
 st.set_page_config(page_title="Global Climate & Dengue Resource Portal", layout="wide", initial_sidebar_state="expanded")
@@ -100,6 +102,65 @@ with tab1:
     st.subheader("📍 Monitored Epidemiological Sentinel Stations")
     map_df = pd.DataFrame({"lat": active_region["Lats"], "lon": active_region["Lons"]})
     st.map(map_df)
+    # --- ADDED: NEW PLOTLY INTERACTIVE GRAPH MATRIX ---
+    st.markdown("---")
+    st.markdown("##### 📈 Multi-Axis Correlation Model: Climate Drivers vs. Outbreak Trajectories")
+    st.markdown("*Hover your mouse over the graph to inspect unified variables across any month simultaneously.*")
+    
+    # Construct figure with a secondary Y-axis
+    fig = make_subplots(specs=[[{"secondary_y": True}]])
+    
+    # 1. Add WHO Dengue Cases as a Bar Chart (Primary Left Y-Axis)
+    fig.add_trace(
+        go.Bar(
+            x=analysis_df.index, 
+            y=analysis_df["Reported Cases"], 
+            name="Reported Cases (WHO)", 
+            marker_color='rgba(242, 108, 100, 0.75)',
+            hovertemplate='%{y:,}'
+        ),
+        secondary_y=False,
+    )
+    
+    # 2. Add NOAA Temperature Record as a Line Chart (Secondary Right Y-Axis)
+    fig.add_trace(
+        go.Scatter(
+            x=analysis_df.index, 
+            y=analysis_df["Temperature (°C)"], 
+            name="Avg Temperature (NOAA)", 
+            line=dict(color='orange', width=4),
+            hovertemplate='%{y}°C'
+        ),
+        secondary_y=True,
+    )
+    
+    # 3. Add NOAA Precipitation Record as a Line Chart (Secondary Right Y-Axis)
+    fig.add_trace(
+        go.Scatter(
+            x=analysis_df.index, 
+            y=analysis_df["Precipitation (mm)"], 
+            name="Precipitation (NOAA)", 
+            line=dict(color='deepskyblue', width=3, dash='dash'),
+            hovertemplate='%{y} mm'
+        ),
+        secondary_y=True,
+    )
+    
+    # Fine-tune layout properties for standard data presentation
+    fig.update_layout(
+        hovermode="x unified",
+        legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1),
+        margin=dict(l=0, r=0, t=30, b=0),
+        height=500
+    )
+    
+    # Format individual axis titles cleanly
+    fig.update_yaxes(title_text="<b>Primary Axis:</b> Active Case Volume (WHO)", secondary_y=False)
+    fig.update_yaxes(title_text="<b>Secondary Axis:</b> Meteorological Scales (NOAA)", secondary_y=True)
+    
+    # Render unified interactive chart widget
+    st.plotly_chart(fig, use_container_width=True)
+    # --- END OF ADDED GRAPH MATRIX ---
 
 with tab2:
     st.subheader("📚 Verified Technical Records & Biological Context")
