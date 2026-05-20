@@ -98,11 +98,7 @@ with tab1:
         st.markdown("##### WHO Epidemiological Profile: Monthly Confirmed Dengue Infections")
         st.bar_chart(analysis_df["Reported Cases"])
         
-    st.markdown("---")
-    st.subheader("📍 Monitored Epidemiological Sentinel Stations")
-    map_df = pd.DataFrame({"lat": active_region["Lats"], "lon": active_region["Lons"]})
-    st.map(map_df)
-    # --- ADDED: NEW PLOTLY INTERACTIVE GRAPH MATRIX ---
+          # --- ADDED: NEW PLOTLY INTERACTIVE GRAPH MATRIX ---
     st.markdown("---")
     st.markdown("##### 📈 Multi-Axis Correlation Model: Climate Drivers vs. Outbreak Trajectories")
     st.markdown("*Hover your mouse over the graph to inspect unified variables across any month simultaneously.*")
@@ -160,7 +156,13 @@ with tab1:
     
     # Render unified interactive chart widget
     st.plotly_chart(fig, use_container_width=True)
+    
     # --- END OF ADDED GRAPH MATRIX ---
+    st.markdown("---")
+    st.subheader("📍 Monitored Epidemiological Sentinel Stations")
+    map_df = pd.DataFrame({"lat": active_region["Lats"], "lon": active_region["Lons"]})
+    st.map(map_df)
+  
 
 with tab2:
     st.subheader("📚 Verified Technical Records & Biological Context")
